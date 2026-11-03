@@ -4,7 +4,6 @@ import frs.applyLoomNode
 // loom.platform=fabric, deps.minecraft, deps.fabric_loader, deps.fabric_api and
 // deps.minecraft.range.fabric. Mixin configs are declared in fabric.mod.json.
 
-// No refmap: Loom 1.17 no longer runs the mixin AP on Fabric and remaps mixins in remapJar.
 applyLoomNode()
 
 dependencies {

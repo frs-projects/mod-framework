@@ -1,12 +1,10 @@
 import frs.applyLoomNode
-import frs.useModRefmap
 import frs.mixinConfigs
 
 // A Forge node (e.g. 1.20.1-forge). The node's gradle.properties must set loom.platform=forge,
 // deps.minecraft, deps.forge, deps.forge.range and deps.minecraft.range.forgelike.
 
 val loom = applyLoomNode()
-useModRefmap(loom)
 
 // Forge 47 reads mixin configs from the jar manifest, not from mods.toml; Loom writes the
 // MixinConfigs attribute and passes the configs to the dev runs.
