@@ -123,8 +123,9 @@ fails the build if it or `pack.mcmeta` is missing from the jar.
 ### Mixins
 
 - Mixin configs are named `<mod.id>[.<area>].mixins.json`.
-- Refmap: on Fabric and Forge the refmap is `<mod.id>.refmap.json`; a config may name it via
-  `"refmap"`, and Loom writes it in otherwise. NeoForge needs none.
+- Refmap: on Forge the refmap is `<mod.id>.refmap.json`; a config may name it via `"refmap"`,
+  and Loom writes it in otherwise. Fabric (Loom remaps mixins in `remapJar`) and NeoForge
+  (Mojang names at runtime) need none.
 - Forge: list every config in `mod.mixins`. NeoForge: `[[mixins]]` in `neoforge.mods.toml`.
   Fabric: `"mixins"` in `fabric.mod.json`.
 

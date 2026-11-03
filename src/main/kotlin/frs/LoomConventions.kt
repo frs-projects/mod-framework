@@ -50,10 +50,10 @@ fun Project.mixinConfigs(): List<String> =
         .orEmpty()
 
 /**
- * Names the mixin refmap `<mod.id>.refmap.json` on the loaders whose production runtime is
- * obfuscated (Fabric: intermediary, Forge 1.20.1: SRG), where the mixin AP has to run. A mixin
- * config can then name its refmap and be right on every node; Loom also writes it into each
- * config. NeoForge runs on Mojang names and has no mixin AP, so it is not called there.
+ * Names the mixin refmap `<mod.id>.refmap.json`, so a mixin config can name it and be right on
+ * every node; Loom also writes it into each config. Only for Forge: it is the one loader where
+ * Loom 1.17 still runs the legacy mixin AP (1.20.1 runs on SRG names). Fabric remaps mixins in
+ * remapJar and NeoForge runs on Mojang names, and Loom warns if a refmap is configured there.
  */
 fun Project.useModRefmap(loom: LoomGradleExtensionAPI) {
     loom.mixin.defaultRefmapName.set("${rootProject.property("mod.id")}.refmap.json")
