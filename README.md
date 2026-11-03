@@ -65,6 +65,9 @@ checked in parallel, and on a `v*` tag a GitHub Release carrying every node's ja
 - Jars are named `<mod.id>-<mod.version>+<node>.jar`.
 - Per-loader entry points live in one file per loader, wrapped whole in `//? if <loader> {`,
   so only the active loader's file compiles.
+- Loader-gated files carry only `//` comments: Stonecutter comments an inactive file out with
+  one block comment, which a Javadoc block inside would end early.
+- Git holds the tree as the `vcsVersion` node; run `"Reset active project"` before committing.
 
 ### `:core`
 
