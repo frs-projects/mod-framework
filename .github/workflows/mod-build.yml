@@ -19,6 +19,11 @@ on:
         description: JSON array of Stonecutter nodes, e.g. '["1.20.1-forge", "1.21.1-neoforge"]'.
         required: true
         type: string
+      core:
+        description: Whether the mod has a :core project to test.
+        required: false
+        type: boolean
+        default: true
     secrets:
       FRAMEWORK_TOKEN:
         description: >-
@@ -29,6 +34,7 @@ on:
 jobs:
   core:
     name: core (no Minecraft)
+    if: inputs.core
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -76,7 +82,11 @@ jobs:
 
   release:
     name: release
-    if: startsWith(github.ref, 'refs/tags/v')
+    # Runs when every node built and :core either passed or does not exist (skipped).
+    if: >-
+      startsWith(github.ref, 'refs/tags/v') && !cancelled()
+      && needs.matrix.result == 'success'
+      && (needs.core.result == 'success' || needs.core.result == 'skipped')
     needs: [core, matrix]
     runs-on: ubuntu-latest
     permissions:

@@ -24,7 +24,7 @@ up in a mod jar.
 | `frs.forge` | `build.forge.gradle.kts` | Loom + node conventions + Forge; mixin configs from `mod.mixins`; registers `META-INF/accesstransformer.cfg` if present |
 | `frs.neoforge` | `build.neoforge.gradle.kts` | Loom + node conventions + NeoForge |
 | `frs.fabric` | `build.fabric.gradle.kts` | Loom + node conventions + Fabric Loader + Fabric API |
-| `frs.node` | (by the loader plugins) | Versioning, toolchain, repositories, `:core` folding, metadata templating, `verifyModMetadata` |
+| `frs.node` | (by the loader plugins) | Versioning, toolchain, repositories, `:core` folding (if present), metadata templating, `verifyModMetadata` |
 
 `.github/workflows/mod-build.yml` is the reusable CI: `:core:test` once, every node built and
 checked in parallel, and on a `v*` tag a GitHub Release carrying every node's jar.
@@ -71,6 +71,8 @@ checked in parallel, and on a `v*` tag a GitHub Release carrying every node's ja
 
 ### `:core`
 
+- **Optional.** A mod without Minecraft-free logic leaves out `include("core")` and `core/`,
+  and passes `core: false` to the workflow. Everything else works the same.
 - **No Minecraft, no loader, no mod APIs.** Only the JDK, Gson (`compileOnly`, provided by
   Minecraft at runtime) and `org.jetbrains:annotations`.
 - Holds everything that can be decided without the game: algorithms, config parsing and
@@ -115,7 +117,15 @@ checked in parallel, and on a `v*` tag a GitHub Release carrying every node's ja
 templates. Only the active node's loader file is expanded and shipped; `verifyModMetadata`
 fails the build if it or `pack.mcmeta` is missing from the jar.
 
+Every `mod.*` and `deps.*` property, from the root or the node's `gradle.properties`, is a
+token: the prefix is dropped and dots become underscores. `mod.version` is `${version}`,
+`deps.minecraft.range.forgelike` is `${minecraft_range_forgelike}`, and a mod-specific
+`deps.rinku.range` is `${rinku_range}`, with no framework change. `${java}` is the node's
+`java.version`.
+
+These always exist, with defaults when the property is missing:
 `${id}` `${name}` `${version}` `${group}` `${license}` `${description}` `${authors}` `${source}`
+`${issues}` (default `${source}/issues`) `${update_json}` (default empty)
 `${java}` `${minecraft}` `${pack_format}` `${minecraft_range_fabric}` `${minecraft_range_forgelike}`
 `${fabric_loader}` `${fabric_api}` `${neoforge}` `${neoforge_range}` `${javafml_range}`
 `${forge}` `${forge_range}`

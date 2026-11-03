@@ -42,10 +42,12 @@ tasks.withType<JavaCompile>().configureEach {
     options.release = nodeJava
 }
 
+// The pure-Java engine, if the mod has one. No Minecraft types, so it needs no remapping;
+// its classes are folded into the platform jar below.
+val core: Project? = rootProject.findProject(":core")
+
 dependencies {
-    // The pure-Java engine. No Minecraft types, so it needs no remapping; its
-    // classes are folded into the platform jar below.
-    "implementation"(project(":core"))
+    if (core != null) "implementation"(core)
     "compileOnly"("org.jetbrains:annotations:26.0.2")
 }
 
@@ -53,7 +55,9 @@ tasks.named<Jar>("jar") {
     manifest.attributes(
         "Specification-Title" to prop("mod.name"),
         "Specification-Vendor" to prop("mod.authors"),
+        "Implementation-Title" to prop("mod.name"),
         "Implementation-Version" to prop("mod.version"),
+        "Implementation-Vendor" to prop("mod.authors"),
     )
 }
 
@@ -75,12 +79,15 @@ tasks.named<ProcessResources>("processResources") {
     // unions only the node's own classes/resources dirs into it, so with :core merely on the
     // runtime classpath anything touching it dies with NoClassDefFoundError under
     // runClient/runServer. (Fabric's Knot classloader is flat and never needed this.)
-    from(project(":core").layout.buildDirectory.dir("classes/java/main")) {
-        exclude("**/*.kotlin_metadata")
+    if (core != null) {
+        from(core.layout.buildDirectory.dir("classes/java/main")) {
+            exclude("**/*.kotlin_metadata")
+        }
+        dependsOn(":core:classes")
     }
-    dependsOn(":core:classes")
 
-    val tokens = mapOf(
+    // Defaults for the standard tokens, so a template never meets an undefined one.
+    val defaults = mapOf(
         "id" to prop("mod.id"),
         "name" to prop("mod.name"),
         "version" to prop("mod.version"),
@@ -104,7 +111,17 @@ tasks.named<ProcessResources>("processResources") {
         "javafml_range" to (propOrNull("deps.javafml.range") ?: "[1,)"),
         "forge" to (propOrNull("deps.forge") ?: ""),
         "forge_range" to (propOrNull("deps.forge.range") ?: ""),
+        "issues" to "${prop("mod.source")}/issues",
+        "update_json" to "",
     )
+    // Every mod.* and deps.* property (root and node) is also a token: prefix dropped, dots
+    // turned into underscores. So deps.rinku.range is ${rinku_range} and mod.issues is ${issues},
+    // and a mod can add its own tokens without touching the framework.
+    val derived = project.properties
+        .filterKeys { it.startsWith("mod.") || it.startsWith("deps.") }
+        .mapKeys { it.key.substringAfter('.').replace('.', '_') }
+        .mapValues { it.value.toString() }
+    val tokens = defaults + derived
     inputs.properties(tokens)
     val allMetadata = listOf("fabric.mod.json", "META-INF/neoforge.mods.toml", "META-INF/mods.toml")
     // Only this node's loader metadata is templated; the others would fail to

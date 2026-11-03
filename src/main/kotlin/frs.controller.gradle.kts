@@ -18,8 +18,8 @@ tasks.register("buildAll") {
 
 tasks.register("checkAll") {
     group = modId
-    description = "Runs :core's tests and every node's checks, including mod metadata verification."
-    dependsOn(":core:check")
+    description = "Runs :core's tests (if any) and every node's checks, including mod metadata verification."
+    if (findProject(":core") != null) dependsOn(":core:check")
     dependsOn(nodes.map { "${it.path}:check" })
 }
 
