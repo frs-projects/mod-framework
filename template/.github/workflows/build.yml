@@ -1,0 +1,24 @@
+name: Build
+
+on:
+  # Builds run only on version tags (e.g. v0.1.2), which also publish a GitHub Release
+  # with every node's jar; builds are verified locally before tagging.
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    uses: frs-projects/mod-framework/.github/workflows/mod-build.yml@main
+    permissions:
+      contents: write
+    with:
+      mod-id: examplemod
+      title: Example Mod
+      # Must list exactly the nodes registered in settings.gradle.kts.
+      nodes: '["1.20.1-forge", "1.21.1-fabric", "1.21.1-neoforge"]'
+    secrets: inherit
