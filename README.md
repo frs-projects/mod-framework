@@ -161,9 +161,24 @@ Use the `mod*` configurations so Loom remaps them to the dev mappings. Prefer a 
 
 ### Versioning and releases
 
-- Bump `mod.version`, verify locally (`./gradlew checkAll`), commit, then tag `v<mod.version>`
-  and push the tag. Builds only run on tags (and by hand via *workflow_dispatch*).
-- The release job refuses a tag that does not match `mod.version`.
+Releases are cut with `framework/bump.sh`, run from the mod:
+
+```sh
+framework/bump.sh            # patch: 1.2.3 -> 1.2.4
+framework/bump.sh minor      # 1.2.3 -> 1.3.0
+framework/bump.sh major      # 1.2.3 -> 2.0.0
+framework/bump.sh 1.5.0      # an explicit version
+```
+
+It bumps `mod.version`, runs `./gradlew checkAll` (`--no-check` skips it), commits
+`Release v<version>`, tags `v<version>` and pushes the commit and tag together (`-y` skips the
+confirmation). It refuses a dirty tree, a branch that is behind origin, an existing tag, and a
+`framework/` commit that is not on mod-framework's `origin/main`, since CI could not check that
+one out.
+
+- Builds only run on tags (and by hand via *workflow_dispatch*).
+- The release job refuses a tag that does not match `mod.version`, so a hand-made tag must
+  match too.
 
 ## Tasks
 
