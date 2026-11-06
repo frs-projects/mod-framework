@@ -170,6 +170,14 @@ framework/bump.sh major      # 1.2.3 -> 2.0.0
 framework/bump.sh 1.5.0      # an explicit version
 ```
 
+On Windows use `framework\bump.bat` from cmd or PowerShell, with the same arguments and checks:
+
+```bat
+framework\bump.bat            # patch: 1.2.3 -> 1.2.4
+framework\bump.bat minor      # 1.2.3 -> 1.3.0
+framework\bump.bat 1.5.0 -y   # an explicit version, no confirmation
+```
+
 It bumps `mod.version`, runs `./gradlew checkAll` (`--no-check` skips it), commits
 `Release v<version>`, tags `v<version>` and pushes the commit and tag together (`-y` skips the
 confirmation). It refuses a dirty tree, a branch that is behind origin, an existing tag, and a

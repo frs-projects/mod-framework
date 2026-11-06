@@ -1,0 +1,4 @@
+# bump.sh must keep LF (bash breaks on CRLF), bump.bat must keep CRLF (cmd labels break on LF),
+# whatever core.autocrlf says on the machine that checks them out.
+*.sh  text eol=lf
+*.bat text eol=crlf
