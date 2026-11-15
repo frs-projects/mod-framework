@@ -158,12 +158,22 @@ dependencies {
 }
 ```
 
-Use the `mod*` configurations so Loom remaps them to the dev mappings. Prefer a real maven
-(Modrinth maven is already configured: `maven.modrinth:<slug>:<version>`) when there is one.
+Use the `mod*` configurations so Loom remaps them to the dev mappings. Prefer a real maven when
+there is one. Two are already configured:
+
+- Modrinth: `maven.modrinth:<slug>:<version>`
+- CurseForge through [CurseMaven](https://www.cursemaven.com): `curse.maven:<slug>-<projectId>:<fileId>`.
+  The project ID is on the project page (or `https://api.cfwidget.com/minecraft/mc-mods/<slug>`
+  lists it with every file's ID); the slug part is free text.
+
+```kotlin
+"modCompileOnly"("curse.maven:sa-decor-1591233:8848647")   // sa_decor-forge-1.20.1-1.0.3.jar
+```
 
 Never commit a jar whose license doesn't allow redistribution (e.g. All Rights Reserved), not even
 to a private repository: gitignore it (`libs/<name>*.jar`) and say in the README where to download
-it and which file name to give it. CI then needs another source for it.
+it and which file name to give it. Better: resolve it from CurseMaven or Modrinth (above), which
+download it from the author's own page, so nothing is redistributed and CI works too.
 
 ### Versioning and releases
 

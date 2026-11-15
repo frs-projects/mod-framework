@@ -24,6 +24,12 @@ repositories {
     maven("https://maven.minecraftforge.net/") { name = "MinecraftForge" }
     maven("https://maven.architectury.dev/") { name = "Architectury" }
     maven("https://api.modrinth.com/maven") { name = "Modrinth" }
+    // CurseForge files as "curse.maven:<slug>-<projectId>:<fileId>". Exclusive: only that group is
+    // looked up there, and that group only there.
+    exclusiveContent {
+        forRepository { maven("https://cursemaven.com") { name = "CurseMaven" } }
+        filter { includeGroup("curse.maven") }
+    }
     // Mod jars that are on no maven live in the mod's libs/ folder, named <artifact>-<version>.jar,
     // and are declared as "blank:<artifact>:<version>" (see README, "Third-party jars").
     flatDir { dirs(rootProject.file("libs")) }
