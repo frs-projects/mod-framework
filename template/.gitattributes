@@ -1,0 +1,8 @@
+# LF everywhere, whatever core.autocrlf says on the machine that commits: gradlew is run by
+# /bin/sh on Linux CI and breaks on CRLF ("/bin/sh^M: bad interpreter").
+* text=auto eol=lf
+# cmd needs CRLF.
+*.bat text eol=crlf
+# Binary files are never converted.
+*.jar binary
+*.png binary

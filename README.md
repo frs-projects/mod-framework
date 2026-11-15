@@ -48,6 +48,8 @@ checked in parallel, and on a `v*` tag a GitHub Release carrying every node's ja
 ├── libs/                           # third-party jars that are on no maven (optional)
 ├── .github/workflows/build.yml     # calls mod-build.yml
 ├── gradle/ , gradlew , gradlew.bat # Gradle 9.7 wrapper; gradle-daemon-jvm.properties pins Java 25
+├── .gitattributes                  # LF for text (gradlew breaks on CRLF), CRLF for .bat
+├── CHANGELOG.md
 └── README.md
 ```
 
@@ -158,6 +160,10 @@ dependencies {
 
 Use the `mod*` configurations so Loom remaps them to the dev mappings. Prefer a real maven
 (Modrinth maven is already configured: `maven.modrinth:<slug>:<version>`) when there is one.
+
+Never commit a jar whose license doesn't allow redistribution (e.g. All Rights Reserved), not even
+to a private repository: gitignore it (`libs/<name>*.jar`) and say in the README where to download
+it and which file name to give it. CI then needs another source for it.
 
 ### Versioning and releases
 
