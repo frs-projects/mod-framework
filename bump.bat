@@ -13,6 +13,9 @@ rem Options:
 rem   --no-check   skip gradlew checkAll before tagging
 rem   -y, --yes    do not ask for confirmation
 setlocal EnableExtensions EnableDelayedExpansion
+rem shift also moves %0, so remember where this script lives before parsing arguments.
+set "self=%~f0"
+set "self_dir=%~dp0"
 
 set "part=patch"
 set "check=1"
@@ -36,7 +39,7 @@ goto fail
 
 :help
 set /a "i=0"
-for /f "usebackq tokens=* delims=" %%L in (`findstr /b /c:"rem" "%~f0"`) do (
+for /f "usebackq tokens=* delims=" %%L in (`findstr /b /c:"rem" "!self!"`) do (
     set /a "i+=1"
     if !i! leq 13 (
         set "line=%%L"
@@ -50,7 +53,7 @@ where git >nul 2>nul || (set "msg=git is not on PATH" & goto fail)
 
 rem The mod is the repository this framework is checked out in.
 set "mod_dir="
-for /f "usebackq delims=" %%D in (`git -C "%~dp0." rev-parse --show-superproject-working-tree 2^>nul`) do set "mod_dir=%%D"
+for /f "usebackq delims=" %%D in (`git -C "!self_dir!." rev-parse --show-superproject-working-tree 2^>nul`) do set "mod_dir=%%D"
 if not defined mod_dir (set "msg=run this as framework\bump.bat inside a mod, not in mod-framework itself" & goto fail)
 cd /d "!mod_dir!" || (set "msg=cannot enter !mod_dir!" & goto fail)
 if not exist gradle.properties (set "msg=no gradle.properties in !mod_dir!" & goto fail)
